@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Using Coolvetica font for all text */
+
+@font-face {
+  font-family: 'Coolvetica';
+  src: url('/fonts/coolvetica.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background: #f9f4f0;
+    font-family: 'Coolvetica', sans-serif;
+    color: #1a4a3a;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Lenis smooth scroll styles */
+  html.lenis {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .glass-morphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(to right, #64b5f6, #42a5f5);
+    color: white;
+    font-weight: 500;
+    padding: 16px 40px;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+  }
+
+  /* Custom Scrollbar for Modal */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #1c1c1c;
+    border-radius: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #2c2c2c;
+    border-radius: 4px;
+    border: 1px solid #1c1c1c;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #3c3c3c;
+  }
+
+  /* Firefox scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #2c2c2c #1c1c1c;
+  }
+}
