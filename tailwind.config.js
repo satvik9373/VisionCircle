@@ -10,6 +10,7 @@ module.exports = {
       fontFamily: {
         'heading': ['Coolvetica', 'sans-serif'],
         'subtext': ['Coolvetica', 'sans-serif'],
+        'playfair': ['Playfair Display', 'serif'],
       },
       colors: {
         'black': '#000000',
@@ -19,9 +20,13 @@ module.exports = {
         'deep-blue': '#0f3460',
         'accent-blue': '#64b5f6',
         'accent-blue-light': '#42a5f5',
+        'green': '#1a4a3a',
+        'green-light': '#2d5a4a',
+        'green-dark': '#0f2f23',
       },
       animation: {
         'fade-in': 'fadeIn 1s ease-in-out',
+        'fade-out': 'fadeOut 0.5s ease-in-out',
         'slide-in-left': 'slideInLeft 0.5s ease-out',
         'slide-in-right': 'slideInRight 0.5s ease-out',
       },
@@ -33,6 +38,10 @@ module.exports = {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        fadeOut: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
         },
         slideInLeft: {
           '0%': { transform: 'translateX(-100%)', opacity: '0' },

@@ -1,4 +1,4 @@
-// File: C:\Users\Satvik chaturvedi\Documents\VisionCircle\app\page.tsx
+// File: D:\Personal\Github\VisionCircle\app\page.tsx
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
