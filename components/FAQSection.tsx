@@ -29,7 +29,7 @@ export default function FAQSection() {
   }
 
   return (
-    <section className="py-20 px-6 bg-[#f9f4f0]">
+    <section id="faq" className="py-20 px-6 bg-[#f9f4f0]">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-[#1a4a3a] mb-4 tracking-normal">
@@ -69,7 +69,7 @@ export default function FAQSection() {
           </div>
 
           {/* Right side - Contact Us */}
-          <div className="flex justify-end">
+          <div className="flex justify-center lg:justify-end">
             <div className="bg-[#eee5dc] rounded-3xl p-6 shadow-lg w-80 h-56 flex flex-col justify-center">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-[#1a4a3a] mb-2">

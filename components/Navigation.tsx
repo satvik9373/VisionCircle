@@ -15,7 +15,7 @@ export default function Navigation() {
           {/* Logo */}
           <div className="flex items-center w-16">
             <img
-              src="/images/Vision Circle-logo.png"
+              src="/images/Logo-Transparent.png"
               alt="Vision Circle Logo"
               className="w-10 h-10"
             />
