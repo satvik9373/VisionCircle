@@ -83,7 +83,7 @@ export default function HeroSection() {
               type="submit"
               className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-3 bg-[#1a4a3a] text-white rounded-full font-medium hover:bg-[#0f3328] transition-colors duration-300 whitespace-nowrap text-sm"
             >
-              Join The community
+              Join The Waitlist
             </button>
           </form>
         </motion.div>

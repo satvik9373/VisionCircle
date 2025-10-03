@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Home, Users, Layers, HelpCircle } from 'lucide-react'
+import { Home, Users, Layers, HelpCircle, Plus } from 'lucide-react'
 import WaitlistModal from './WaitlistModal'
 
 export default function Navigation() {
@@ -65,6 +65,13 @@ export default function Navigation() {
             <HelpCircle size={18} />
             <span className="text-xs font-medium">FAQ</span>
           </a>
+          <button 
+            onClick={() => setIsWaitlistModalOpen(true)}
+            className="flex flex-col items-center space-y-1 text-[#1a4a3a] hover:text-[#0f3328] transition-colors"
+          >
+            <Plus size={18} />
+            <span className="text-xs font-medium">Waitlist</span>
+          </button>
         </div>
       </nav>
 
