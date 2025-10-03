@@ -190,7 +190,7 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                 onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
                 onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
                 required
-                placeholder="+91 93250 53980"
+                placeholder="+91 12345 67890"
               />
             </div>
 
