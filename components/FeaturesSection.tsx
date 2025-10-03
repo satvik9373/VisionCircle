@@ -13,8 +13,8 @@ export default function FeaturesSection() {
           <div className="relative rounded-2xl overflow-hidden aspect-video shadow-2xl">
             <iframe 
               className="w-full h-full absolute inset-0"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
-              title="Coworking | Stock video Pan - Community Glimpse" 
+              src="https://www.youtube.com/embed/F9_AmkdGTV8?si=E-fPbFbVNioQYs_M" 
+              title="YouTube video player" 
               frameBorder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
               referrerPolicy="strict-origin-when-cross-origin" 
