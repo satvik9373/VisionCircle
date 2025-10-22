@@ -23,7 +23,7 @@ export default function PricingSection() {
   return (
     <>
       <section id="pricing" className="py-16 px-6 bg-[#f9f4f0]">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1a4a3a] mb-3 tracking-normal">
@@ -35,7 +35,7 @@ export default function PricingSection() {
           </div>
 
           {/* Pricing Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-[#1a4a3a]/10">
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-[#1a4a3a]/10 max-w-xl mx-auto">
             {/* Price Section */}
             <div className="text-center mb-6 pb-6 border-b border-gray-200">
               <div className="mb-2">
@@ -52,7 +52,7 @@ export default function PricingSection() {
               <h3 className="text-lg font-semibold text-[#1a4a3a] mb-4 text-center">
                 Everything you need to grow:
               </h3>
-              <ul className="space-y-3 max-w-md mx-auto">
+              <ul className="space-y-3 max-w-sm mx-auto">
                 {benefits.map((benefit, index) => (
                   <li key={index} className="flex items-start gap-2.5">
                     <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[#1a4a3a] flex items-center justify-center mt-0.5">
