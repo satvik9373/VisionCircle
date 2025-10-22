@@ -40,7 +40,7 @@ export default function PricingSection() {
             <div className="text-center mb-6 pb-6 border-b border-gray-200">
               <div className="mb-2">
                 <span className="text-4xl md:text-5xl font-bold text-[#1a4a3a]">$19</span>
-                <span className="text-lg text-gray-600 ml-2">/month for early members</span>
+                <span className="text-lg text-gray-600 ml-2">/onetime for early members</span>
               </div>
               <p className="text-sm text-gray-600">
                 Limited spots available for founding members
