@@ -25,7 +25,7 @@ export default function HeroSection() {
           className="text-4xl md:text-6xl lg:text-7xl font-bold text-[#1a4a3a] leading-tight mb-6 tracking-normal px-4"
         >
           Vision Circle<br />
-          <span className="text-[#1a4a3a]">A Community Built for Founders</span>
+          <span className="text-[#1a4a3a]">A Community Built for like minded individuals</span>
         </motion.h1>
         
         {/* Subtext */}
@@ -39,7 +39,7 @@ export default function HeroSection() {
             Meet, share, and grow with people who get it.
           </p>
           <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto px-4">
-            Your space to connect, collaborate, and create what's next.
+            Your space to connect, collaborate, and create the next big thing.
           </p>
         </motion.div>
         

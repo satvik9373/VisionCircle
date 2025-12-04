@@ -17,7 +17,7 @@ export default function TeamSection() {
       id: 1,
       name: "Satvik Chaturvedi",
       role: "Founder",
-      image: "/images/satvik.JPG",
+      image: "/images/Image-Satvik.jpg",
       position: 'center'
     },
     {

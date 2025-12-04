@@ -6,7 +6,7 @@ import Navigation from '../components/Navigation'
 import HeroSection from '../components/HeroSection'
 import TeamSection from '../components/TeamSection'
 import FeaturesSection from '../components/FeaturesSection'
-import PricingSection from '../components/PricingSection'
+import FoundersSection from '../components/FoundersSection'
 import FAQSection from '../components/FAQSection'
 import Footer from '../components/Footer'
 import SmoothScrollProvider from '../components/SmoothScrollProvider'
@@ -30,7 +30,7 @@ export default function Home() {
         <HeroSection />
         <TeamSection />
         <FeaturesSection />
-        <PricingSection />
+        <FoundersSection />
         <FAQSection />
       </main>
       <Footer />
