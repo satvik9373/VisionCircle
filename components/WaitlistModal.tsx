@@ -10,14 +10,13 @@ interface WaitlistModalProps {
 
 export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
   const [formData, setFormData] = useState({
+    name: '',
+    age: '',
     phoneNumber: '',
-    workEmail: '',
-    whyJoin: '',
-    currentRole: '',
-    linkedinProfile: '',
     instagramHandle: '',
-    hopingToGain: '',
-    skillsContribution: ''
+    currentlyBuilding: '',
+    thirtyDayGoal: '',
+    shareWins: ''
   })
   
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -75,14 +74,13 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
         setSubmitStatus('success')
         // Reset form
         setFormData({
+          name: '',
+          age: '',
           phoneNumber: '',
-          workEmail: '',
-          whyJoin: '',
-          currentRole: '',
-          linkedinProfile: '',
           instagramHandle: '',
-          hopingToGain: '',
-          skillsContribution: ''
+          currentlyBuilding: '',
+          thirtyDayGoal: '',
+          shareWins: ''
         })
         // Close modal after 2 seconds
         setTimeout(() => {
@@ -176,6 +174,44 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
           }`}>
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Name */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-3">
+                Name *
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm"
+                style={{ backgroundColor: '#2c2c2c' }}
+                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
+                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
+                required
+                placeholder="John Doe"
+              />
+            </div>
+
+            {/* Age */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-3">
+                Age *
+              </label>
+              <input
+                type="number"
+                value={formData.age}
+                onChange={(e) => handleInputChange('age', e.target.value)}
+                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm"
+                style={{ backgroundColor: '#2c2c2c' }}
+                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
+                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
+                required
+                placeholder="25"
+                min="1"
+                max="120"
+              />
+            </div>
+
             {/* Phone Number */}
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-3">
@@ -192,84 +228,15 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                 required
                 placeholder="+91 12345 67890"
               />
-            </div>
-
-            {/* Work Email */}
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-3">
-                Work Email *
-              </label>
-              <input
-                type="email"
-                value={formData.workEmail}
-                onChange={(e) => handleInputChange('workEmail', e.target.value)}
-                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm"
-                style={{ backgroundColor: '#2c2c2c' }}
-                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
-                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
-                required
-                placeholder="your.work@email.com"
-              />
-            </div>
-
-            {/* Why do you want to join Vision Circle */}
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-3">
-                Why do you want to join Vision Circle? *
-              </label>
-              <textarea
-                value={formData.whyJoin}
-                onChange={(e) => handleInputChange('whyJoin', e.target.value)}
-                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm resize-none"
-                style={{ backgroundColor: '#2c2c2c' }}
-                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
-                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
-                required
-                rows={3}
-                placeholder="Tell us what motivates you to join our community..."
-              />
-            </div>
-
-            {/* Current role or venture */}
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-3">
-                What's your current role or venture? *
-              </label>
-              <input
-                type="text"
-                value={formData.currentRole}
-                onChange={(e) => handleInputChange('currentRole', e.target.value)}
-                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm"
-                style={{ backgroundColor: '#2c2c2c' }}
-                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
-                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
-                required
-                placeholder="e.g., Founder at TechStartup, Product Manager, Entrepreneur"
-              />
-            </div>
-
-            {/* LinkedIn Profile */}
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-3">
-                Share your LinkedIn profile link. *
-              </label>
-              <input
-                type="url"
-                value={formData.linkedinProfile}
-                onChange={(e) => handleInputChange('linkedinProfile', e.target.value)}
-                className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm"
-                style={{ backgroundColor: '#2c2c2c' }}
-                onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
-                onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
-                required
-                placeholder="https://linkedin.com/in/yourprofile"
-              />
+              <p className="text-xs text-gray-400 mt-2">
+                *make sure the given number is linked with whatsapp
+              </p>
             </div>
 
             {/* Instagram Handle */}
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-3">
-                Share your Instagram handle or link (if applicable).
+                What's your Instagram handle?
               </label>
               <input
                 type="text"
@@ -279,44 +246,76 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                 style={{ backgroundColor: '#2c2c2c' }}
                 onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
                 onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
-                placeholder="@yourusername or https://instagram.com/yourusername"
+                placeholder="@yourusername"
               />
             </div>
 
-            {/* What are you hoping to gain */}
+            {/* Currently Building */}
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-3">
-                What are you hoping to gain from being part of this community? *
+                What are you currently building or working on? *
               </label>
               <textarea
-                value={formData.hopingToGain}
-                onChange={(e) => handleInputChange('hopingToGain', e.target.value)}
+                value={formData.currentlyBuilding}
+                onChange={(e) => handleInputChange('currentlyBuilding', e.target.value)}
                 className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm resize-none"
                 style={{ backgroundColor: '#2c2c2c' }}
                 onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
                 onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
                 required
                 rows={3}
-                placeholder="Networking, mentorship, collaboration opportunities, knowledge sharing..."
+                placeholder="Tell us about your current project, startup, or work..."
               />
             </div>
 
-            {/* Skills contribution */}
+            {/* 30 Day Goal */}
             <div>
               <label className="block text-gray-300 text-sm font-medium mb-3">
-                Any specific skills, expertise, or experience you can contribute to the community? *
+                What do you want to achieve in the next 30 days with VisionCircle? *
               </label>
               <textarea
-                value={formData.skillsContribution}
-                onChange={(e) => handleInputChange('skillsContribution', e.target.value)}
+                value={formData.thirtyDayGoal}
+                onChange={(e) => handleInputChange('thirtyDayGoal', e.target.value)}
                 className="w-full px-4 py-3 border border-white rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1a4a3a] transition-all duration-300 text-sm resize-none"
                 style={{ backgroundColor: '#2c2c2c' }}
                 onFocus={(e) => e.target.style.backgroundColor = '#1c1c1c'}
                 onBlur={(e) => e.target.style.backgroundColor = '#2c2c2c'}
                 required
                 rows={3}
-                placeholder="Technical skills, industry experience, mentoring, connections..."
+                placeholder="Your goals for the next 30 days..."
               />
+            </div>
+
+            {/* Share Wins */}
+            <div>
+              <label className="block text-gray-300 text-sm font-medium mb-3">
+                Are you okay if some of your completed tasks are shared as wins inside the community? *
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="shareWins"
+                    value="yes"
+                    checked={formData.shareWins === 'yes'}
+                    onChange={(e) => handleInputChange('shareWins', e.target.value)}
+                    className="mr-3 w-4 h-4 text-[#1a4a3a] bg-[#3a3a3a] border-gray-600 focus:ring-[#1a4a3a] focus:ring-2"
+                    required
+                  />
+                  <span className="text-gray-300 text-sm">Yes</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="shareWins"
+                    value="no"
+                    checked={formData.shareWins === 'no'}
+                    onChange={(e) => handleInputChange('shareWins', e.target.value)}
+                    className="mr-3 w-4 h-4 text-[#1a4a3a] bg-[#3a3a3a] border-gray-600 focus:ring-[#1a4a3a] focus:ring-2"
+                  />
+                  <span className="text-gray-300 text-sm">No</span>
+                </label>
+              </div>
             </div>
 
             {/* Consent checkbox */}

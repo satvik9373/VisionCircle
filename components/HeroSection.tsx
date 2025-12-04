@@ -16,26 +16,6 @@ export default function HeroSection() {
 
   return (
     <section className="min-h-screen flex items-center justify-center px-4 md:px-8 py-2 md:py-8 pt-6 md:pt-12 bg-[#f9f4f0] relative overflow-hidden">
-      {/* Decorative floating elements - Hidden on mobile */}
-      <div className="hidden md:block absolute top-1/3 right-20 w-16 h-16 bg-gray-200 rounded-lg opacity-40"></div>
-      <div className="hidden md:block absolute bottom-1/4 left-1/4 w-12 h-12 bg-gray-300 rounded-full opacity-30"></div>
-      
-      {/* Profile images - Hidden on mobile */}
-      <div className="hidden md:block absolute top-1/4 left-20 w-20 h-20 rounded-full overflow-hidden">
-        <img 
-          src="/images/satvik.JPG" 
-          alt="Satvik" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="hidden md:block absolute bottom-1/3 right-32 w-24 h-24 rounded-full overflow-hidden">
-        <img 
-          src="/images/Aarush.jpeg" 
-          alt="Aarush" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-
       <div className="w-full max-w-4xl mx-auto text-center relative z-10">
         {/* Main Headline */}
         <motion.h1 

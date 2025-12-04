@@ -42,25 +42,23 @@ export async function POST(request: NextRequest) {
     // Extract and validate form data
     const body = await request.json();
     const {
+      name,
+      age,
       phoneNumber,
-      workEmail,
-      whyJoin,
-      currentRole,
-      linkedinProfile,
       instagramHandle,
-      hopingToGain,
-      skillsContribution
+      currentlyBuilding,
+      thirtyDayGoal,
+      shareWins
     } = body;
 
     // Validate required fields
     const requiredFields = {
+      name,
+      age,
       phoneNumber,
-      workEmail,
-      whyJoin,
-      currentRole,
-      linkedinProfile,
-      hopingToGain,
-      skillsContribution
+      currentlyBuilding,
+      thirtyDayGoal,
+      shareWins
     };
 
     for (const [field, value] of Object.entries(requiredFields)) {
@@ -70,15 +68,6 @@ export async function POST(request: NextRequest) {
           error: `Missing required field: ${field}`
         }, { status: 400 });
       }
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(workEmail)) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid email format'
-      }, { status: 400 });
     }
 
     // Set up Google Sheets authentication
@@ -97,40 +86,38 @@ export async function POST(request: NextRequest) {
     const timestamp = new Date().toISOString();
     const rowData = [
       timestamp,
+      name.trim(),
+      age.trim(),
       phoneNumber.trim(),
-      workEmail.trim(),
-      whyJoin.trim(),
-      currentRole.trim(),
-      linkedinProfile.trim(),
-      instagramHandle?.trim() || '', // Optional field
-      hopingToGain.trim(),
-      skillsContribution.trim()
+      instagramHandle.trim(),
+      currentlyBuilding.trim(),
+      thirtyDayGoal.trim(),
+      shareWins.trim()
     ];
 
     // Check if headers exist, if not create them
     try {
       const headerResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Sheet1!A1:I1',
+        range: 'Sheet1!A1:H1',
       });
 
       // If no headers exist, add them
       if (!headerResponse.data.values || headerResponse.data.values.length === 0) {
         const headers = [
           'Timestamp',
+          'Name',
+          'Age',
           'Phone Number',
-          'Work Email',
-          'Why Join Vision Circle',
-          'Current Role/Venture',
-          'LinkedIn Profile',
           'Instagram Handle',
-          'Hoping To Gain',
-          'Skills/Contribution'
+          'Currently Building',
+          '30 Day Goal',
+          'Share Wins'
         ];
 
         await sheets.spreadsheets.values.update({
           spreadsheetId,
-          range: 'Sheet1!A1:I1',
+          range: 'Sheet1!A1:H1',
           valueInputOption: 'RAW',
           requestBody: {
             values: [headers],
@@ -145,7 +132,7 @@ export async function POST(request: NextRequest) {
     // Append the new row
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Sheet1!A:I',
+      range: 'Sheet1!A:H',
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       requestBody: {
