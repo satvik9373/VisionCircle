@@ -33,13 +33,6 @@ export default function FoundersSection() {
           </div>
         </div>
 
-        {/* Main Heading */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl mb-4 font-bold text-[#1a4a3a] tracking-normal leading-tight">
-            Know about founders
-          </h2>
-        </div>
-
         {/* Founders Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {founders.map((founder, index) => (
