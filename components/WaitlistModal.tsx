@@ -90,7 +90,7 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
         setSubmitStatus('error')
         setErrorMessage(result.error || 'Failed to join waitlist. Please try again.')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Form submission error:', error)
       setSubmitStatus('error')
       

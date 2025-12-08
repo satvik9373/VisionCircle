@@ -4,8 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET() {
   try {
     // Test Google Sheets connection
-    const { google } = require('googleapis');
-    
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
@@ -26,19 +24,19 @@ export async function GET() {
       success: true, 
       message: 'Google Sheets connection successful!',
       spreadsheetTitle: spreadsheet.data.properties.title,
-      sheets: spreadsheet.data.sheets.map(sheet => sheet.properties.title),
+      sheets: spreadsheet.data.sheets.map((sheet: any) => sheet.properties.title),
       env_check: {
         GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
         GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
         GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google Sheets test failed:', error);
     return NextResponse.json({
       success: false,
       error: 'Google Sheets connection failed',
-      details: error.message,
+      details: error?.message || 'Unknown error',
       env_check: {
         GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
         GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
@@ -116,7 +114,7 @@ export async function POST(request: NextRequest) {
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });
       console.log('Google Auth initialized successfully');
-    } catch (authError) {
+    } catch (authError: any) {
       console.error('Google Auth initialization failed:', authError);
       return NextResponse.json({
         success: false,
@@ -176,7 +174,7 @@ export async function POST(request: NextRequest) {
           },
         });
       }
-    } catch (headerError) {
+    } catch (headerError: any) {
       console.error('Error checking/creating headers:', headerError);
       // Continue even if header check fails
     }
@@ -203,7 +201,7 @@ export async function POST(request: NextRequest) {
           updatedRows: response.data.updates?.updatedRows,
         },
       });
-    } catch (appendError) {
+    } catch (appendError: any) {
       console.error('Error appending to Google Sheets:', appendError);
       return NextResponse.json({
         success: false,
