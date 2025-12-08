@@ -3,6 +3,23 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
   try {
+    // Simple environment check without Google API call
+    const envCheck = {
+      GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
+      GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+      GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
+    };
+
+    // Only test Google connection if all env vars are present
+    if (!envCheck.GOOGLE_SHEETS_ID || !envCheck.GOOGLE_SHEETS_CLIENT_EMAIL || !envCheck.GOOGLE_SHEETS_PRIVATE_KEY) {
+      return NextResponse.json({
+        success: false,
+        error: 'Missing environment variables',
+        env_check: envCheck,
+        message: 'Please check Vercel environment variables'
+      }, { status: 500 });
+    }
+
     // Test Google Sheets connection
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -20,16 +37,12 @@ export async function GET() {
       spreadsheetId,
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: 'Google Sheets connection successful!',
       spreadsheetTitle: spreadsheet.data.properties.title,
       sheets: spreadsheet.data.sheets.map((sheet: any) => sheet.properties.title),
-      env_check: {
-        GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
-        GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-        GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
-      }
+      env_check: envCheck
     });
   } catch (error: any) {
     console.error('Google Sheets test failed:', error);
