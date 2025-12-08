@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:sheets": "node test-google-sheets.js"
   },
   "dependencies": {
     "dotenv": "^17.2.3",

@@ -69,6 +69,7 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       console.log('Response ok:', response.ok);
 
       const result = await response.json()
+      console.log('Response data:', result);
 
       if (result.success) {
         setSubmitStatus('success')
@@ -85,10 +86,14 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
         // Close modal after 2 seconds
         setTimeout(() => {
           onClose()
+          setSubmitStatus('idle')
         }, 2000)
       } else {
         setSubmitStatus('error')
-        setErrorMessage(result.error || 'Failed to join waitlist. Please try again.')
+        // Show detailed error message
+        const errorMsg = result.error || 'Failed to join waitlist. Please try again.'
+        const debugInfo = result.debug ? ` (Debug: ${result.debug})` : ''
+        setErrorMessage(errorMsg + debugInfo)
       }
     } catch (error: any) {
       console.error('Form submission error:', error)
@@ -97,6 +102,8 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
       // More specific error messages
       if (error instanceof TypeError && error.message.includes('fetch')) {
         setErrorMessage('Cannot connect to server. Please check if the application is running.')
+      } else if (error.name === 'AbortError') {
+        setErrorMessage('Request timeout. Please try again.')
       } else if (error instanceof Error) {
         setErrorMessage(`Network error: ${error.message}`)
       } else {

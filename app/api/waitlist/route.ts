@@ -2,6 +2,12 @@ import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+
   try {
     // Simple environment check without Google API call
     const envCheck = {
@@ -17,14 +23,20 @@ export async function GET() {
         error: 'Missing environment variables',
         env_check: envCheck,
         message: 'Please check Vercel environment variables'
-      }, { status: 500 });
+      }, { status: 500, headers });
     }
 
     // Test Google Sheets connection
+    let privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY;
+    if (privateKey?.startsWith('"') && privateKey?.endsWith('"')) {
+      privateKey = privateKey.slice(1, -1);
+    }
+    privateKey = privateKey?.replace(/\\n/g, '\n');
+
     const auth = new google.auth.GoogleAuth({
       credentials: {
         client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        private_key: privateKey,
       },
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
@@ -40,10 +52,10 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       message: 'Google Sheets connection successful!',
-      spreadsheetTitle: spreadsheet.data.properties.title,
-      sheets: spreadsheet.data.sheets.map((sheet: any) => sheet.properties.title),
+      spreadsheetTitle: spreadsheet.data.properties?.title,
+      sheets: spreadsheet.data.sheets?.map((sheet: any) => sheet.properties?.title),
       env_check: envCheck
-    });
+    }, { headers });
   } catch (error: any) {
     console.error('Google Sheets test failed:', error);
     return NextResponse.json({
@@ -55,12 +67,20 @@ export async function GET() {
         GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
         GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
       }
-    }, { status: 500 });
+    }, { status: 500, headers });
   }
 }
 
 export async function POST(request: NextRequest) {
-  console.log('API route called!');
+  console.log('=== API route called ===');
+  
+  // Add CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+
   try {
     // Validate required environment variables
     const requiredEnvVars = [
@@ -73,6 +93,7 @@ export async function POST(request: NextRequest) {
       GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
       GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
       GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
+      GOOGLE_SHEETS_PRIVATE_KEY_LENGTH: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.length || 0,
     });
 
     for (const envVar of requiredEnvVars) {
@@ -80,13 +101,16 @@ export async function POST(request: NextRequest) {
         console.error(`Missing environment variable: ${envVar}`);
         return NextResponse.json({
           success: false,
-          error: 'Server configuration error. Please try again later.'
-        }, { status: 500 });
+          error: 'Server configuration error. Please try again later.',
+          debug: `Missing ${envVar}`
+        }, { status: 500, headers });
       }
     }
 
     // Extract and validate form data
     const body = await request.json();
+    console.log('Request body received:', Object.keys(body));
+    
     const {
       name,
       age,
@@ -108,21 +132,40 @@ export async function POST(request: NextRequest) {
     };
 
     for (const [field, value] of Object.entries(requiredFields)) {
-      if (!value || value.trim() === '') {
+      if (!value || String(value).trim() === '') {
+        console.error(`Missing or empty field: ${field}`);
         return NextResponse.json({
           success: false,
           error: `Missing required field: ${field}`
-        }, { status: 400 });
+        }, { status: 400, headers });
       }
     }
 
-    // Set up Google Sheets authentication
+    // Set up Google Sheets authentication with multiple private key formats
     let auth;
     try {
+      // Get the private key and handle different formats
+      let privateKey = process.env.GOOGLE_SHEETS_PRIVATE_KEY;
+      
+      // Remove quotes if present
+      if (privateKey?.startsWith('"') && privateKey?.endsWith('"')) {
+        privateKey = privateKey.slice(1, -1);
+      }
+      
+      // Replace literal \n with actual newlines
+      privateKey = privateKey?.replace(/\\n/g, '\n');
+      
+      console.log('Private key processing:', {
+        hasKey: !!privateKey,
+        keyLength: privateKey?.length || 0,
+        startsWithBegin: privateKey?.startsWith('-----BEGIN'),
+        endsWithEnd: privateKey?.endsWith('-----')
+      });
+      
       auth = new google.auth.GoogleAuth({
         credentials: {
           client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-          private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+          private_key: privateKey,
         },
         scopes: ['https://www.googleapis.com/auth/spreadsheets'],
       });
@@ -131,32 +174,46 @@ export async function POST(request: NextRequest) {
       console.error('Google Auth initialization failed:', authError);
       return NextResponse.json({
         success: false,
-        error: 'Authentication setup failed. Please try again later.'
-      }, { status: 500 });
+        error: 'Authentication setup failed. Please try again later.',
+        debug: authError.message
+      }, { status: 500, headers });
     }
 
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
 
     // Get spreadsheet info to find the correct sheet name
-    const spreadsheetInfo = await sheets.spreadsheets.get({
-      spreadsheetId,
-    });
-    const sheetName = spreadsheetInfo.data.sheets[0].properties.title;
-    console.log('Using sheet name:', sheetName);
+    let sheetName: string;
+    try {
+      console.log('Fetching spreadsheet info...');
+      const spreadsheetInfo = await sheets.spreadsheets.get({
+        spreadsheetId,
+      });
+      sheetName = spreadsheetInfo.data.sheets?.[0]?.properties?.title || 'Sheet1';
+      console.log('Using sheet name:', sheetName);
+    } catch (sheetError: any) {
+      console.error('Error fetching spreadsheet:', sheetError);
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to access Google Sheet. Please verify permissions.',
+        debug: sheetError.message
+      }, { status: 500, headers });
+    }
 
     // Prepare the row data
     const timestamp = new Date().toISOString();
     const rowData = [
       timestamp,
-      name.trim(),
-      age.trim(),
-      phoneNumber.trim(),
-      instagramHandle.trim(),
-      currentlyBuilding.trim(),
-      thirtyDayGoal.trim(),
-      shareWins.trim()
+      String(name).trim(),
+      String(age).trim(),
+      String(phoneNumber).trim(),
+      String(instagramHandle || '').trim(),
+      String(currentlyBuilding).trim(),
+      String(thirtyDayGoal).trim(),
+      String(shareWins).trim()
     ];
+
+    console.log('Prepared row data with', rowData.length, 'columns');
 
     // Check if headers exist, if not create them
     try {
@@ -213,13 +270,14 @@ export async function POST(request: NextRequest) {
         data: {
           updatedRows: response.data.updates?.updatedRows,
         },
-      });
+      }, { headers });
     } catch (appendError: any) {
       console.error('Error appending to Google Sheets:', appendError);
       return NextResponse.json({
         success: false,
-        error: 'Failed to save data. Please check Google Sheets permissions.'
-      }, { status: 500 });
+        error: 'Failed to save data. Please check Google Sheets permissions.',
+        debug: appendError.message
+      }, { status: 500, headers });
     }
 
   } catch (error: any) {
@@ -229,22 +287,38 @@ export async function POST(request: NextRequest) {
     if (error.code === 403) {
       return NextResponse.json({
         success: false,
-        error: 'Permission denied. Please check Google Sheets sharing settings.'
-      }, { status: 500 });
+        error: 'Permission denied. Please check Google Sheets sharing settings.',
+        debug: error.message
+      }, { status: 500, headers });
     }
 
     if (error.code === 404) {
       return NextResponse.json({
         success: false,
-        error: 'Google Sheet not found. Please verify the sheet ID.'
-      }, { status: 500 });
+        error: 'Google Sheet not found. Please verify the sheet ID.',
+        debug: error.message
+      }, { status: 500, headers });
     }
 
     // Generic error response
     return NextResponse.json({
       success: false,
       error: 'Failed to join waitlist. Please try again later.',
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
-    }, { status: 500 });
+      details: error.message
+    }, { status: 500, headers });
   }
+}
+
+// Handle OPTIONS request for CORS
+export async function OPTIONS() {
+  return NextResponse.json(
+    {},
+    {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    }
+  );
 }
