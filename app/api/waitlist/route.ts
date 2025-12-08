@@ -71,13 +71,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Set up Google Sheets authentication
-    const auth = new google.auth.GoogleAuth({
-      credentials: {
-        client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-        private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY,
-      },
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
+    let auth;
+    try {
+      auth = new google.auth.GoogleAuth({
+        credentials: {
+          client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+          private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        },
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+      console.log('Google Auth initialized successfully');
+    } catch (authError) {
+      console.error('Google Auth initialization failed:', authError);
+      return NextResponse.json({
+        success: false,
+        error: 'Authentication setup failed. Please try again later.'
+      }, { status: 500 });
+    }
 
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
@@ -130,24 +140,34 @@ export async function POST(request: NextRequest) {
     }
 
     // Append the new row
-    const response = await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: 'Sheet1!A:H',
-      valueInputOption: 'RAW',
-      insertDataOption: 'INSERT_ROWS',
-      requestBody: {
-        values: [rowData],
-      },
-    });
+    try {
+      console.log('Attempting to append data to Google Sheets...');
+      const response = await sheets.spreadsheets.values.append({
+        spreadsheetId,
+        range: 'Sheet1!A:H',
+        valueInputOption: 'RAW',
+        insertDataOption: 'INSERT_ROWS',
+        requestBody: {
+          values: [rowData],
+        },
+      });
 
-    // Success response
-    console.log('Successfully added row to Google Sheets:', response.data.updates);
-    
-    return NextResponse.json({
-      success: true,
-      message: 'Successfully joined the waitlist!',
-      data: {
-        updatedRows: response.data.updates?.updatedRows,
+      console.log('Successfully added row to Google Sheets:', response.data.updates);
+      
+      return NextResponse.json({
+        success: true,
+        message: 'Successfully joined the waitlist!',
+        data: {
+          updatedRows: response.data.updates?.updatedRows,
+        },
+      });
+    } catch (appendError) {
+      console.error('Error appending to Google Sheets:', appendError);
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to save data. Please check Google Sheets permissions.'
+      }, { status: 500 });
+    }
         updatedRange: response.data.updates?.updatedRange
       }
     });
