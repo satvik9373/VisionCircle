@@ -2,15 +2,50 @@ import { google } from 'googleapis';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET() {
-  return NextResponse.json({ 
-    success: true, 
-    message: 'Waitlist API is working!',
-    env_check: {
-      GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
-      GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
-      GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
-    }
-  });
+  try {
+    // Test Google Sheets connection
+    const { google } = require('googleapis');
+    
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_SHEETS_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      },
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
+
+    // Try to get spreadsheet metadata
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId,
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Google Sheets connection successful!',
+      spreadsheetTitle: spreadsheet.data.properties.title,
+      sheets: spreadsheet.data.sheets.map(sheet => sheet.properties.title),
+      env_check: {
+        GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
+        GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+        GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
+      }
+    });
+  } catch (error) {
+    console.error('Google Sheets test failed:', error);
+    return NextResponse.json({
+      success: false,
+      error: 'Google Sheets connection failed',
+      details: error.message,
+      env_check: {
+        GOOGLE_SHEETS_ID: !!process.env.GOOGLE_SHEETS_ID,
+        GOOGLE_SHEETS_CLIENT_EMAIL: !!process.env.GOOGLE_SHEETS_CLIENT_EMAIL,
+        GOOGLE_SHEETS_PRIVATE_KEY: !!process.env.GOOGLE_SHEETS_PRIVATE_KEY,
+      }
+    }, { status: 500 });
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -92,6 +127,13 @@ export async function POST(request: NextRequest) {
     const sheets = google.sheets({ version: 'v4', auth });
     const spreadsheetId = process.env.GOOGLE_SHEETS_ID;
 
+    // Get spreadsheet info to find the correct sheet name
+    const spreadsheetInfo = await sheets.spreadsheets.get({
+      spreadsheetId,
+    });
+    const sheetName = spreadsheetInfo.data.sheets[0].properties.title;
+    console.log('Using sheet name:', sheetName);
+
     // Prepare the row data
     const timestamp = new Date().toISOString();
     const rowData = [
@@ -109,7 +151,7 @@ export async function POST(request: NextRequest) {
     try {
       const headerResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Sheet1!A1:H1',
+        range: `${sheetName}!A1:H1`,
       });
 
       // If no headers exist, add them
@@ -127,7 +169,7 @@ export async function POST(request: NextRequest) {
 
         await sheets.spreadsheets.values.update({
           spreadsheetId,
-          range: 'Sheet1!A1:H1',
+          range: `${sheetName}!A1:H1`,
           valueInputOption: 'RAW',
           requestBody: {
             values: [headers],
@@ -144,7 +186,7 @@ export async function POST(request: NextRequest) {
       console.log('Attempting to append data to Google Sheets...');
       const response = await sheets.spreadsheets.values.append({
         spreadsheetId,
-        range: 'Sheet1!A:H',
+        range: `${sheetName}!A:H`,
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
         requestBody: {
@@ -168,9 +210,6 @@ export async function POST(request: NextRequest) {
         error: 'Failed to save data. Please check Google Sheets permissions.'
       }, { status: 500 });
     }
-        updatedRange: response.data.updates?.updatedRange
-      }
-    });
 
   } catch (error: any) {
     console.error('Google Sheets API Error:', error);
