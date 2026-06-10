@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Cormorant Garamond, bold italic — used for all display / accent type */
+.serif-i {
+  font-family: var(--font-cormorant), serif;
+  font-style: italic;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+button {
+  white-space: nowrap;
+}
+
+/* Film-grain texture overlays lifted from the source file */
+.grain {
+  position: relative;
+}
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/assets/grain.png") center / cover;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.grain-soft {
+  position: relative;
+}
+.grain-soft::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/assets/grain.png") center / cover;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}

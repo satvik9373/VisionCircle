@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VisionCircle</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: "var(--c-cream, #F9F4F0)",
+          forest: "var(--c-forest, #0F3328)",
+          ink: "var(--c-ink, #1E1E1E)",
+        },
+        fontFamily: {
+          inter: ['Inter', 'sans-serif'],
+          serif: ['"Cormorant Garamond"', 'serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  /* ── CSS tokens ─────────────────────────────── */
+  :root {
+    --c-cream: #F9F4F0;
+    --c-forest: #0F3328;
+    --c-ink: #1E1E1E;
+    --transition: color .35s, background-color .35s, border-color .35s;
+  }
+  /* Palette: Midnight */
+  html[data-palette="midnight"] { --c-cream:#EEEDF8; --c-forest:#0D1B4B; --c-ink:#08102A; }
+  /* Palette: Ember */
+  html[data-palette="ember"] { --c-cream:#FBF0E8; --c-forest:#5C1A0B; --c-ink:#1F0600; }
+  /* Palette: Stone */
+  html[data-palette="stone"] { --c-cream:#F0EDE6; --c-forest:#2C3E50; --c-ink:#18242E; }
+
+  /* smooth colour transitions everywhere */
+  *, *::before, *::after { transition: var(--transition); }
+
+  /* ── Type Voice ──────────────────────────────── */
+  /* Compact */
+  [data-type="compact"] [data-screen-label="Hero"] h1 { font-size:32px !important; }
+  [data-type="compact"] [data-screen-label="Hero"] h2 { font-size:46px !important; }
+  [data-type="compact"] section h2, [data-type="compact"] footer h2 { font-size:30px !important; }
+  [data-type="compact"] section p.font-inter { font-size:13px !important; }
+  /* Editorial */
+  [data-type="editorial"] [data-screen-label="Hero"] h1 { font-size:68px !important; letter-spacing:-.07em !important; }
+  [data-type="editorial"] [data-screen-label="Hero"] h2 { font-size:96px !important; line-height:.9 !important; }
+  [data-type="editorial"] section h2 { font-size:64px !important; }
+  [data-type="editorial"] section p.font-inter { font-size:18px !important; }
+  [data-type="editorial"] .serif-i { letter-spacing:-.09em !important; }
+
+  /* ── Card Feel ───────────────────────────────── */
+  /* Outlined */
+  [data-cards="outlined"] .bg-ink {
+    background-color: transparent !important;
+    border: 1.5px solid rgba(249,244,240,.35) !important;
+  }
+  [data-cards="outlined"] #about .bg-forest {
+    background-color: transparent !important;
+    border: 1.5px solid var(--c-forest) !important;
+  }
+  [data-cards="outlined"] #about .bg-forest .text-cream { color: var(--c-forest) !important; }
+  /* Ghost */
+  [data-cards="ghost"] .bg-ink {
+    background-color: rgba(249,244,240,.05) !important;
+    border: none !important;
+    backdrop-filter: blur(2px);
+  }
+  [data-cards="ghost"] #about .bg-forest {
+    background-color: rgba(15,51,40,.08) !important;
+    border: none !important;
+  }
+  [data-cards="ghost"] #about .bg-forest .text-cream { color: var(--c-forest) !important; }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--c-cream); }
+  .serif-i { font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:700; white-space:nowrap; }
+  button { white-space:nowrap; }
+  /* grain texture overlay */
+  .grain::before{
+    content:"";
+    position:absolute; inset:0;
+    background:url('public/assets/grain.png') center/cover;
+    opacity:.5; mix-blend-mode:overlay; pointer-events:none;
+  }
+  .grain-soft::before{
+    content:"";
+    position:absolute; inset:0;
+    background:url('public/assets/grain.png') center/cover;
+    opacity:.35; mix-blend-mode:multiply; pointer-events:none;
+  }
+
+  /* ── Tweaks Panel ────────────────────────────── */
+  #vc-tweaks {
+    position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+    width: 252px;
+    background: var(--c-forest);
+    border-radius: 18px;
+    padding: 20px 20px 18px;
+    box-shadow: 0 12px 48px rgba(0,0,0,.45);
+    color: var(--c-cream);
+    font-family: 'Inter', sans-serif;
+    display: none;
+    transition: opacity .2s, transform .2s;
+  }
+  #vc-tweaks.open { display: block; }
+  #vc-tweaks-title {
+    font-family: 'Cormorant Garamond', serif; font-style: italic; font-weight: 700;
+    font-size: 22px; letter-spacing: -.06em; margin-bottom: 16px;
+    color: var(--c-cream);
+  }
+  .tw-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    opacity: .65; margin-bottom: 8px; color: var(--c-cream);
+  }
+  .tw-group { margin-bottom: 16px; }
+  /* Palette swatches */
+  .tw-swatches { display: flex; gap: 8px; }
+  .tw-swatch {
+    width: 36px; height: 36px; border-radius: 50%;
+    cursor: pointer; border: 2.5px solid transparent;
+    transition: transform .15s, border-color .15s;
+  }
+  .tw-swatch:hover { transform: scale(1.12); }
+  .tw-swatch.active { border-color: var(--c-cream); }
+  /* Segmented controls */
+  .tw-seg { display: flex; gap: 4px; }
+  .tw-seg-btn {
+    flex: 1; font-size: 11px; font-weight: 700; letter-spacing: -.02em;
+    padding: 6px 0; border-radius: 7px; border: none; cursor: pointer;
+    background: rgba(249,244,240,.12); color: var(--c-cream);
+    transition: background .15s, color .15s;
+  }
+  .tw-seg-btn.active {
+    background: var(--c-cream); color: var(--c-forest);
+  }
+  .tw-divider { border: none; border-top: 1px solid rgba(249,244,240,.15); margin: 14px 0; }
+</style>
+</head>
+<body class="text-ink antial">
+
+<!-- ============ HERO ============ -->
+<section data-screen-label="Hero" class="relative bg-forest grain overflow-hidden">
+  <!-- Navbar -->
+  <nav class="relative z-20 bg-cream rounded-[10px] mx-0">
+    <div class="max-w-[1440px] mx-auto h-[88px] px-12 flex items-center justify-between">
+      <!-- logo -->
+      <div class="w-[60px] h-[60px] rounded-full bg-forest flex items-center justify-center shrink-0">
+        <span class="serif-i text-cream text-[15px] tracking-[-0.07em]">Visioncircle</span>
+      </div>
+      <!-- links -->
+      <div class="flex items-center gap-12">
+        <a href="#about" class="serif-i text-[20px] text-black tracking-[-0.06em] whitespace-nowrap hover:opacity-60 transition">About Visioncircle</a>
+        <a href="#team" class="serif-i text-[20px] text-black tracking-[-0.06em] whitespace-nowrap hover:opacity-60 transition">Lean Team</a>
+        <a href="#faq" class="serif-i text-[20px] text-black tracking-[-0.06em] whitespace-nowrap hover:opacity-60 transition">Faq</a>
+      </div>
+      <!-- join -->
+      <button class="serif-i text-[14px] text-black tracking-[-0.06em] whitespace-nowrap bg-cream border border-forest rounded-[5px] px-5 py-1.5 hover:bg-forest hover:text-cream transition">Join now</button>
+    </div>
+  </nav>
+
+  <!-- Hero content -->
+  <div class="relative z-10 max-w-[1440px] mx-auto px-6 flex flex-col items-center text-center pt-24 pb-28">
+    <h1 class="font-inter font-extrabold text-white text-[48px] leading-[1.05] tracking-[-0.06em] whitespace-nowrap">
+      <span class="relative inline-block">Build faster with people
+        <img src="public/assets/underline.svg" alt="" class="absolute left-0 -bottom-5 w-[200px] opacity-90" style="width: 10px" />
+      </span>
+    </h1>
+    <h2 class="serif-i text-white text-[64px] leading-[1.0] tracking-[-0.07em] mt-4 whitespace-nowrap">who won't let you quit.</h2>
+
+    <p class="font-inter font-bold text-cream text-[16px] leading-[1.3] tracking-[-0.04em] mt-8 max-w-[560px]">
+      Join a handpicked community of creators and entrepreneurs who help you move faster, think clearer, and finally finish what you start.
+    </p>
+
+    <button class="serif-i text-[18px] text-black tracking-[-0.06em] bg-cream rounded-[6px] px-7 py-2 mt-8 hover:scale-[1.03] transition">Join now</button>
+
+    <!-- video box -->
+    <div class="w-full max-w-[774px] aspect-[774/502] rounded-[20px] bg-[#d9d9d9] mt-16 flex items-center justify-center">
+      <span class="serif-i text-forest text-[64px] tracking-[-0.06em]">Yt Video explaining</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT / FIT ============ -->
+<section id="about" data-screen-label="About fit" class="relative bg-cream grain-soft overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1280px] mx-auto px-8">
+    <!-- tab -->
+    <div class="flex justify-center">
+      <span class="serif-i text-cream text-[20px] tracking-[-0.06em] bg-forest rounded-full px-8 py-1.5">Is it a match?</span>
+    </div>
+    <!-- heading -->
+    <h2 class="font-inter font-extrabold text-forest text-[48px] leading-[1.05] tracking-[-0.06em] text-center mt-7">Is VisionCircle right for you?</h2>
+    <p class="serif-i text-forest text-[22px] tracking-[-0.06em] text-center mt-2">You're a perfect fit if you're:</p>
+
+    <!-- cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-7 mt-12">
+      <!-- card 1 -->
+      <div class="bg-forest rounded-[20px] p-7 min-h-[200px] flex flex-col justify-between">
+        <img src="public/assets/fit-icon-1.png" alt="" class="h-11 w-auto object-contain self-start brightness-0 invert opacity-90" />
+        <p class="font-inter font-bold text-cream text-[15px] leading-[1.15] tracking-[-0.03em] mt-6">
+          <span class="block">Building something real</span>
+          You're an entrepreneur with a project, startup, or business idea and you need accountability to keep moving forward.
+        </p>
+      </div>
+      <!-- card 2 -->
+      <div class="bg-forest rounded-[20px] p-7 min-h-[200px] flex flex-col justify-between">
+        <img src="public/assets/fit-icon-2.png" alt="" class="h-11 w-auto object-contain self-start brightness-0 invert opacity-90" />
+        <p class="font-inter font-bold text-cream text-[15px] leading-[1.15] tracking-[-0.03em] mt-6">
+          <span class="block">Growing your voice online</span>
+          You're a creator building your personal brand, and you want feedback from people who understand the game.
+        </p>
+      </div>
+      <!-- card 3 -->
+      <div class="bg-forest rounded-[20px] p-7 min-h-[200px] flex flex-col justify-between">
+        <img src="public/assets/fit-icon-3.png" alt="" class="h-12 w-auto object-contain self-start brightness-0 invert opacity-90" />
+        <p class="font-inter font-bold text-cream text-[15px] leading-[1.15] tracking-[-0.03em] mt-6">
+          <span class="block">Ready to level up your circle</span>
+          You're done with surface-level connections. You want a network of ambitious people who challenge you, support you, and actually care about your growth.
+        </p>
+      </div>
+    </div>
+
+    <!-- join -->
+    <div class="flex justify-center mt-10">
+      <button class="serif-i text-[18px] text-cream tracking-[-0.06em] bg-forest rounded-[6px] px-7 py-2 hover:scale-[1.03] transition">Join Now</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHAT'S INSIDE / THE SAUCE ============ -->
+<section data-screen-label="Whats Inside" class="relative bg-forest grain overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1280px] mx-auto px-8">
+    <span class="serif-i text-black text-[20px] tracking-[-0.06em] bg-cream rounded-full px-8 py-1.5 inline-block">The Sauce</span>
+    <h2 class="serif-i text-white text-[40px] tracking-[-0.06em] mt-5">Is it even worth it to join visioncircle</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mt-16">
+      <!-- card 1 -->
+      <div class="bg-ink rounded-[12px] px-7 pt-10 pb-9 flex flex-col items-center text-center">
+        <img src="public/assets/fit-icon-3.png" alt="" class="h-[150px] object-contain brightness-0 invert" />
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em] mt-6">Weekly live community calls</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[230px]">Join intimate sessions where members share real progress, get honest feedback, and solve the biggest challenges blocking their next move.</p>
+      </div>
+      <!-- card 2 -->
+      <div class="bg-ink rounded-[12px] px-7 pt-10 pb-9 flex flex-col items-center text-center">
+        <img src="public/assets/inside-illustration.png" alt="" class="h-[150px] object-contain brightness-0 invert" />
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em] mt-6">Guest sessions from top entrepreneurs</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[230px]">Join intimate sessions where members share real progress, get honest feedback, and solve the biggest challenges blocking their next move.</p>
+      </div>
+      <!-- card 3 -->
+      <div class="bg-ink rounded-[12px] px-7 pt-10 pb-9 flex flex-col items-center text-center">
+        <img src="public/assets/fit-icon-2.png" alt="" class="h-[150px] object-contain brightness-0 invert" />
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em] mt-6">In-person exclusive events</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[230px]">Connect face-to-face with your circle at selective meetups and gatherings because the best relationships happen offline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERKS ============ -->
+<section data-screen-label="Perks" class="relative bg-forest grain overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1280px] mx-auto px-8">
+    <span class="serif-i text-black text-[20px] tracking-[-0.06em] bg-cream rounded-full px-8 py-1.5 inline-block">Perks</span>
+    <h2 class="serif-i text-white text-[48px] tracking-[-0.06em] mt-5">Community Perks</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mt-16">
+      <!-- card 1 -->
+      <div class="bg-ink rounded-[12px] aspect-[200/260] flex flex-col items-center justify-center text-center px-8">
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em]">Private community access</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[220px]">Stay connected between calls with a clean, distraction-free space where members share updates, ask questions, and keep each other moving forward.</p>
+      </div>
+      <!-- card 2 -->
+      <div class="bg-ink rounded-[12px] aspect-[200/260] flex flex-col items-center justify-center text-center px-8">
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em]">Hot seat feedback sessions</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[220px]">Bring your biggest block to the call and get live problem-solving from the entire group—fresh perspectives that unstick you fast.</p>
+      </div>
+      <!-- card 3 -->
+      <div class="bg-ink rounded-[12px] aspect-[200/260] flex flex-col items-center justify-center text-center px-8">
+        <h3 class="font-inter font-bold text-cream text-[19px] tracking-[-0.04em]">Free access to premium tools</h3>
+        <p class="font-inter font-bold text-cream/90 text-[12px] leading-[1.4] tracking-[-0.03em] mt-3 max-w-[220px]">Get direct access to community software and affiliated tools at no cost resources that normally cost lakhs, included just for being part of the circle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEAN TEAM ============ -->
+<section id="team" data-screen-label="Lean Team" class="relative bg-forest grain overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1280px] mx-auto px-8">
+    <div class="flex justify-center">
+      <span class="serif-i text-black text-[20px] tracking-[-0.06em] bg-cream rounded-full px-8 py-1.5">Lean Team</span>
+    </div>
+    <h2 class="font-inter font-extrabold text-white text-[48px] leading-[1.05] tracking-[-0.06em] text-center mt-6">Lean Team of &ldquo;A&rdquo; players</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-12 mt-20 max-w-[1100px] mx-auto">
+      <!-- Satvik -->
+      <div class="flex flex-col">
+        <div class="w-full aspect-[480/454] rounded-[30px] bg-cover bg-center" style="background-image:url('public/assets/satvik.jpg')"></div>
+        <h3 class="font-inter font-extrabold text-cream text-[40px] tracking-[-0.05em] mt-9">Satvik Chaturvedi</h3>
+        <p class="font-inter font-bold text-cream text-[22px] leading-[1.15] tracking-[-0.04em] mt-6">Satvik has been building software for international clients and top-tier agencies since he was 18. Currently studying Computer Science, he's designed systems for leading startups, worked with A-player teams across the globe, and gained real-world experience most developers take years to build.</p>
+        <p class="font-inter font-bold text-cream text-[22px] leading-[1.15] tracking-[-0.04em] mt-7">When he's not coding, he's growing his personal brand and connecting with builders who are serious about their craft.</p>
+      </div>
+      <!-- Aarush -->
+      <div class="flex flex-col">
+        <div class="w-full aspect-[480/454] rounded-[30px] bg-cover bg-center" style="background-image:url('public/assets/aarush.jpg')"></div>
+        <h3 class="font-inter font-extrabold text-cream text-[40px] tracking-[-0.05em] mt-9">Aarush Yadav</h3>
+        <p class="font-inter font-bold text-cream text-[22px] leading-[1.15] tracking-[-0.04em] mt-6">Aarush builds and ships SaaS platforms while studying Computer Science. Over the past year, he's launched multiple products, learned how real software businesses work from the inside, and built a growing presence in the AI and tech space.</p>
+        <p class="font-inter font-bold text-cream text-[22px] leading-[1.15] tracking-[-0.04em] mt-7">He's focused on turning ideas into working products and helping others do the same.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section data-screen-label="Gallery" class="relative bg-cream grain-soft overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1100px] mx-auto px-8">
+    <div class="flex justify-center">
+      <span class="serif-i text-cream text-[20px] tracking-[-0.06em] bg-forest rounded-full px-8 py-1.5">Touch grass</span>
+    </div>
+    <!-- masonry grid -->
+    <div class="grid grid-cols-3 gap-5 mt-16 [grid-auto-rows:minmax(0,1fr)]" style="margin: 64px 0px 0px">
+      <div class="bg-forest rounded-[10px] row-span-2 aspect-[338/500]"></div>
+      <div class="bg-forest rounded-[10px] aspect-[338/420]"></div>
+      <div class="bg-forest rounded-[10px] row-span-2 aspect-[338/500]"></div>
+      <div class="bg-forest rounded-[10px] aspect-[338/350]"></div>
+      <div class="bg-forest rounded-[10px] row-span-2 aspect-[338/500]" style="height: 491px"></div>
+      <div class="bg-forest rounded-[10px] aspect-[338/300]"></div>
+      <div class="bg-forest rounded-[10px] aspect-[338/420]"></div>
+      <div class="bg-forest rounded-[10px] aspect-[338/420]"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section id="faq" data-screen-label="CTA" class="relative bg-cream grain-soft overflow-hidden py-24">
+  <div class="relative z-10 max-w-[1280px] mx-auto px-8">
+    <div class="flex justify-center">
+      <span class="serif-i text-white text-[20px] tracking-[-0.06em] bg-forest rounded-full px-8 py-1.5">Are you in?</span>
+    </div>
+
+    <!-- big forest panel -->
+    <div class="relative bg-forest grain rounded-[20px] mt-12 mx-auto max-w-[1545px] py-20 px-6 flex justify-center overflow-hidden">
+      <!-- pricing card -->
+      <div class="relative z-10 bg-cream rounded-[20px] w-full max-w-[468px] px-10 py-9 shadow-2xl">
+        <div class="flex justify-end">
+          <span class="serif-i text-cream text-[18px] tracking-[-0.06em] bg-forest rounded-[8px] px-5 py-1">Most Popular</span>
+        </div>
+        <p class="font-inter font-extrabold text-black text-[28px] tracking-[-0.05em] mt-2">XX,XX,00</p>
+        <hr class="border-black/80 mt-4" />
+        <h3 class="font-inter font-extrabold text-black text-[28px] tracking-[-0.05em] mt-6">Lifetime Plan</h3>
+        <p class="font-inter font-bold text-black text-[13px] leading-[1.35] tracking-[-0.04em] mt-2">Hit on the &ldquo;Join Now&rdquo; button and fill in the details if we found you the perfect fit you'll get a mail with an exclusive joining link it's free but exclusive</p>
+        <hr class="border-black/80 mt-5" />
+        <div class="flex justify-center mt-7">
+          <button class="serif-i text-[18px] text-cream tracking-[-0.06em] bg-forest rounded-[6px] px-12 py-2 hover:scale-[1.03] transition">Join Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer data-screen-label="Footer" class="relative bg-cream grain-soft overflow-hidden pt-20 pb-10">
+  <div class="relative z-10 max-w-[1700px] mx-auto px-12">
+    <div class="flex flex-col md:flex-row md:items-start justify-between gap-12">
+      <!-- left: logo + links -->
+      <div class="flex flex-col gap-10">
+        <div class="w-[137px] h-[137px] rounded-full bg-forest flex items-center justify-center">
+          <span class="serif-i text-cream text-[24px] tracking-[-0.07em]">Visioncircle</span>
+        </div>
+        <div class="flex items-center gap-10">
+          <a href="#about" class="serif-i text-[20px] text-black tracking-[-0.06em] hover:opacity-60 transition">About Visioncircle</a>
+          <a href="#team" class="serif-i text-[20px] text-black tracking-[-0.06em] hover:opacity-60 transition">Lean Team</a>
+          <a href="#faq" class="serif-i text-[20px] text-black tracking-[-0.06em] hover:opacity-60 transition">Faq</a>
+        </div>
+      </div>
+      <!-- right: newsletter -->
+      <div class="flex flex-col gap-3 md:items-end">
+        <p class="font-inter font-bold text-forest text-[20px] tracking-[-0.06em]">Stay up to date</p>
+        <div class="flex items-stretch gap-4">
+          <div class="bg-forest rounded-[10px] w-[307px] h-[40px] flex items-center px-5">
+            <span class="font-inter font-bold text-white text-[20px] tracking-[-0.06em]">Enter your email</span>
+          </div>
+          <button class="serif-i text-[18px] text-cream tracking-[-0.06em] bg-forest rounded-[5px] px-7 hover:scale-[1.03] transition">Subscribe</button>
+        </div>
+      </div>
+    </div>
+    <hr class="border-black/30 mt-14" />
+    <p class="font-inter font-bold text-black text-[18px] tracking-[-0.05em] text-center mt-8">© 2025 Visioncircle. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ══ TWEAKS PANEL ══════════════════════════════════════ -->
+<div id="vc-tweaks">
+  <div id="vc-tweaks-title">Tweaks</div>
+
+  <!-- Palette -->
+  <div class="tw-group">
+    <div class="tw-label">Palette</div>
+    <div class="tw-swatches">
+      <div class="tw-swatch active" data-palette="forest"   style="background:#0F3328" title="Forest"></div>
+      <div class="tw-swatch"        data-palette="midnight" style="background:#0D1B4B" title="Midnight"></div>
+      <div class="tw-swatch"        data-palette="ember"    style="background:#5C1A0B" title="Ember"></div>
+      <div class="tw-swatch"        data-palette="stone"    style="background:#2C3E50" title="Stone"></div>
+    </div>
+  </div>
+
+  <hr class="tw-divider" />
+
+  <!-- Type Voice -->
+  <div class="tw-group">
+    <div class="tw-label">Type Voice</div>
+    <div class="tw-seg">
+      <button class="tw-seg-btn" data-type="compact">Compact</button>
+      <button class="tw-seg-btn active" data-type="balanced">Balanced</button>
+      <button class="tw-seg-btn" data-type="editorial">Editorial</button>
+    </div>
+  </div>
+
+  <hr class="tw-divider" />
+
+  <!-- Card Feel -->
+  <div class="tw-group" style="margin-bottom:0">
+    <div class="tw-label">Card Feel</div>
+    <div class="tw-seg">
+      <button class="tw-seg-btn active" data-cards="filled">Filled</button>
+      <button class="tw-seg-btn" data-cards="outlined">Outlined</button>
+      <button class="tw-seg-btn" data-cards="ghost">Ghost</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const panel = document.getElementById('vc-tweaks');
+  const root  = document.documentElement;
+
+  // ── persist state ──────────────────────────────────────
+  const S = JSON.parse(localStorage.getItem('vc-tweaks') || '{"palette":"forest","type":"balanced","cards":"filled"}');
+  function save(){ localStorage.setItem('vc-tweaks', JSON.stringify(S)); }
+
+  // ── apply helpers ──────────────────────────────────────
+  function applyPalette(v){
+    root.dataset.palette = v === 'forest' ? '' : v;
+    document.querySelectorAll('.tw-swatch').forEach(el => {
+      el.classList.toggle('active', el.dataset.palette === v);
+    });
+    S.palette = v; save();
+  }
+  function applyType(v){
+    root.dataset.type = v === 'balanced' ? '' : v;
+    document.querySelectorAll('[data-type]').forEach(el => {
+      if(el.closest('#vc-tweaks')) el.classList.toggle('active', el.dataset.type === v);
+    });
+    S.type = v; save();
+  }
+  function applyCards(v){
+    root.dataset.cards = v === 'filled' ? '' : v;
+    document.querySelectorAll('[data-cards]').forEach(el => {
+      if(el.closest('#vc-tweaks')) el.classList.toggle('active', el.dataset.cards === v);
+    });
+    S.cards = v; save();
+  }
+
+  // restore
+  applyPalette(S.palette); applyType(S.type); applyCards(S.cards);
+
+  // ── click handlers ─────────────────────────────────────
+  document.querySelectorAll('.tw-swatch').forEach(el =>
+    el.addEventListener('click', () => applyPalette(el.dataset.palette)));
+
+  // type segmented
+  document.querySelectorAll('[data-type]').forEach(el => {
+    if(!el.closest('#vc-tweaks')) return;
+    el.addEventListener('click', () => applyType(el.dataset.type));
+  });
+
+  // cards segmented
+  document.querySelectorAll('[data-cards]').forEach(el => {
+    if(!el.closest('#vc-tweaks')) return;
+    el.addEventListener('click', () => applyCards(el.dataset.cards));
+  });
+
+  // ── host postMessage protocol ──────────────────────────
+  window.addEventListener('message', e => {
+    if(!e.data || typeof e.data !== 'object') return;
+    if(e.data.type === 'tweaks:open')  panel.classList.add('open');
+    if(e.data.type === 'tweaks:close') panel.classList.remove('open');
+    if(e.data.type === 'tweaks:toggle') panel.classList.toggle('open');
+  });
+
+  // also open on keyboard shortcut T for quick testing
+  document.addEventListener('keydown', e => {
+    if(e.key === 't' && !e.target.matches('input,textarea')) panel.classList.toggle('open');
+  });
+})();
+</script>
+</body>
+</html>
