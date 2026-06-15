@@ -6,13 +6,9 @@ export default function Hero() {
       <Navbar />
 
       <div className="relative z-10 max-w-[1440px] mx-auto px-6 flex flex-col items-center text-center pt-24 pb-28">
-        <h1 className="font-inter font-extrabold text-white text-[48px] leading-[1.05] tracking-[-0.06em] whitespace-nowrap">
-          <span className="relative inline-block">
-            Build faster with people
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/assets/underline.svg" alt="" className="absolute left-0 -bottom-5 w-[200px] opacity-90" />
-          </span>
-        </h1>
+     <h1 className="font-inter font-extrabold text-white text-[48px] leading-[1.05] tracking-[-0.06em] whitespace-nowrap">
+  Build faster with people
+</h1>
         <h2 className="serif-i text-white text-[64px] leading-[1.0] tracking-[-0.07em] mt-4 whitespace-nowrap">
           who won&apos;t let you quit.
         </h2>
