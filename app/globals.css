@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -81,4 +81,3 @@ button {
 }
 .vc-textarea:focus { border-color: #0f3328; }
 .vc-textarea::placeholder { color: rgba(15, 51, 40, 0.28); font-weight: 500; }
-

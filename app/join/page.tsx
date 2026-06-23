@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import JoinForm from "@/components/JoinForm";
 
 export const metadata: Metadata = {
@@ -9,4 +9,3 @@ export const metadata: Metadata = {
 export default function JoinPage() {
   return <JoinForm />;
 }
-

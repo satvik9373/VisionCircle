@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 import Link from 'next/link';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -74,11 +74,11 @@ function Step3({ d, u }: { d: FormData; u: (p: Partial<FormData>) => void }) {
           const sel = d.stage === s.id;
           return (
             <button key={s.id} onClick={() => u({ stage: s.id })}
-              className={``text-left p-[14px_16px] rounded-[12px] border-[1.5px] transition-all duration-200 ${
+              className={`text-left p-[14px_16px] rounded-[12px] border-[1.5px] transition-all duration-200 ${
                 sel ? 'bg-forest border-forest' : 'bg-transparent border-forest/[0.14] hover:border-forest/40 hover:bg-forest/[0.03]'
-              }``}>
-              <p className={``font-inter font-extrabold text-[13px] tracking-[-0.03em] leading-[1.2] ${sel ? 'text-cream' : 'text-forest'}``}>{s.label}</p>
-              <p className={``font-inter font-medium text-[11px] tracking-[-0.02em] mt-1 leading-[1.3] ${sel ? 'text-cream/60' : 'text-forest/45'}``}>{s.desc}</p>
+              }`}>
+              <p className={`font-inter font-extrabold text-[13px] tracking-[-0.03em] leading-[1.2] ${sel ? 'text-cream' : 'text-forest'}`}>{s.label}</p>
+              <p className={`font-inter font-medium text-[11px] tracking-[-0.02em] mt-1 leading-[1.3] ${sel ? 'text-cream/60' : 'text-forest/45'}`}>{s.desc}</p>
             </button>
           );
         })}
@@ -100,9 +100,9 @@ function Step4({ d, u }: { d: FormData; u: (p: Partial<FormData>) => void }) {
           const sel = d.needs.includes(n);
           return (
             <button key={n} onClick={() => toggle(n)}
-              className={``px-[18px] py-2 rounded-full border-[1.5px] font-inter font-bold text-[13px] tracking-[-0.03em] transition-all duration-200 ${
+              className={`px-[18px] py-2 rounded-full border-[1.5px] font-inter font-bold text-[13px] tracking-[-0.03em] transition-all duration-200 ${
                 sel ? 'bg-forest border-forest text-cream' : 'bg-transparent border-forest/[0.18] text-forest hover:border-forest/50'
-              }``}>
+              }`}>
               {n}
             </button>
           );
@@ -123,9 +123,9 @@ function Step5({ d, u }: { d: FormData; u: (p: Partial<FormData>) => void }) {
       </div>
       <label className="flex items-start gap-3 cursor-pointer">
         <div onClick={() => u({ commit: !d.commit })}
-          className={``w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
+          className={`w-5 h-5 rounded-[5px] flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
             d.commit ? 'bg-forest border-2 border-forest' : 'bg-transparent border-2 border-forest/25'
-          }``}>
+          }`}>
           {d.commit && (
             <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
               <path d="M1 4L3.5 6.5L9 1" stroke="#F9F4F0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -251,7 +251,7 @@ export default function JoinForm() {
             {/* Progress bar */}
             <div className="h-[3px] bg-forest/[0.08] w-full">
               <motion.div className="h-[3px] bg-forest rounded-r-sm"
-                initial={false} animate={{ width: ``${progress}%`` }}
+                initial={false} animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }} />
             </div>
 
@@ -286,9 +286,9 @@ export default function JoinForm() {
                         </button>
                       ) : <div />}
                       <button onClick={next} disabled={!ok()}
-                        className={``serif-i text-[17px] tracking-[-0.04em] bg-forest text-cream border-none rounded-[9px] px-[30px] py-[10px] transition-all duration-200 ${
+                        className={`serif-i text-[17px] tracking-[-0.04em] bg-forest text-cream border-none rounded-[9px] px-[30px] py-[10px] transition-all duration-200 ${
                           ok() ? 'opacity-100 hover:opacity-87 cursor-pointer hover:-translate-y-px' : 'opacity-30 cursor-not-allowed'
-                        }``}>
+                        }`}>
                         {step === STEPS.length - 1 ? 'Submit application' : 'Continue →'}
                       </button>
                     </div>
@@ -308,4 +308,3 @@ export default function JoinForm() {
     </div>
   );
 }
-
