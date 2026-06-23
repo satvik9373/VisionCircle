@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -44,3 +44,41 @@ button {
   mix-blend-mode: multiply;
   pointer-events: none;
 }
+
+/* ── Join form inputs ── */
+.vc-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(15, 51, 40, 0.17);
+  padding: 11px 0;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  color: #0f3328;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.vc-input:focus { border-bottom-color: #0f3328; }
+.vc-input::placeholder { color: rgba(15, 51, 40, 0.28); font-weight: 500; }
+
+.vc-textarea {
+  width: 100%;
+  background: rgba(15, 51, 40, 0.025);
+  border: 1.5px solid rgba(15, 51, 40, 0.13);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--font-inter), sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  color: #0f3328;
+  outline: none;
+  resize: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+.vc-textarea:focus { border-color: #0f3328; }
+.vc-textarea::placeholder { color: rgba(15, 51, 40, 0.28); font-weight: 500; }
+
